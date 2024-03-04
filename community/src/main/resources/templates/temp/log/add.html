@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增log')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: bootstrap-fileinput-css"/>
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-log-add">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">出入人：</label>
+                <div class="col-sm-8">
+                    <input name="entryperson" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">出入时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="entrytime" class="form-control" placeholder="yyyy-MM-dd HH:mm:ss" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">出入类型：</label>
+                <div class="col-sm-8">
+                    <select name="entrytype" class="form-control m-b" th:with="type=${@dict.getType('com_goinandout_type')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">出入人类型：</label>
+                <div class="col-sm-8">
+                    <select name="entrypersontype" class="form-control m-b" th:with="type=${@dict.getType('com_resident_type')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">出入照片：</label>
+                <div class="col-sm-8">
+                    <input type="hidden" name="entryphoto">
+                    <div class="file-loading">
+                        <input class="form-control file-upload" id="entryphoto" name="file" type="file">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <th:block th:include="include :: bootstrap-fileinput-js"/>
+    <script th:inline="javascript">
+        var prefix = ctx + "temp/log"
+        $("#form-log-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-log-add').serialize());
+            }
+        }
+
+        $("input[name='entrytime']").datetimepicker({
+            format: "yyyy-mm-dd HH:mm:ss",
+            minView: "day",
+            autoclose: true
+        });
+
+        $(".file-upload").fileinput({
+            uploadUrl: ctx + 'common/upload',
+            maxFileCount: 1,
+            autoReplace: true
+        }).on('fileuploaded', function (event, data, previewId, index) {
+            $("input[name='" + event.currentTarget.id + "']").val(data.response.url)
+        }).on('fileremoved', function (event, id, index) {
+            $("input[name='" + event.currentTarget.id + "']").val('')
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.community.sys.mapper.CommunityServiceProjectMapper">
+    
+    <resultMap type="CommunityServiceProject" id="CommunityServiceProjectResult">
+        <result property="serviceProjectId"    column="service_project_id"    />
+        <result property="serviceProjectName"    column="service_project_name"    />
+        <result property="serviceProjectContent"    column="service_project_content"    />
+        <result property="serviceProjectFee"    column="service_project_fee"    />
+    </resultMap>
+
+    <sql id="selectCommunityServiceProjectVo">
+        select service_project_id, service_project_name, service_project_content, service_project_fee from community_service_project
+    </sql>
+
+    <select id="selectCommunityServiceProjectList" parameterType="CommunityServiceProject" resultMap="CommunityServiceProjectResult">
+        <include refid="selectCommunityServiceProjectVo"/>
+        <where>  
+            <if test="serviceProjectName != null  and serviceProjectName != ''"> and service_project_name like concat('%', #{serviceProjectName}, '%')</if>
+            <if test="serviceProjectContent != null  and serviceProjectContent != ''"> and service_project_content = #{serviceProjectContent}</if>
+            <if test="serviceProjectFee != null "> and service_project_fee = #{serviceProjectFee}</if>
+        </where>
+    </select>
+    
+    <select id="selectCommunityServiceProjectByServiceProjectId" parameterType="Long" resultMap="CommunityServiceProjectResult">
+        <include refid="selectCommunityServiceProjectVo"/>
+        where service_project_id = #{serviceProjectId}
+    </select>
+        
+    <insert id="insertCommunityServiceProject" parameterType="CommunityServiceProject" useGeneratedKeys="true" keyProperty="serviceProjectId">
+        insert into community_service_project
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="serviceProjectName != null and serviceProjectName != ''">service_project_name,</if>
+            <if test="serviceProjectContent != null and serviceProjectContent != ''">service_project_content,</if>
+            <if test="serviceProjectFee != null">service_project_fee,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="serviceProjectName != null and serviceProjectName != ''">#{serviceProjectName},</if>
+            <if test="serviceProjectContent != null and serviceProjectContent != ''">#{serviceProjectContent},</if>
+            <if test="serviceProjectFee != null">#{serviceProjectFee},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCommunityServiceProject" parameterType="CommunityServiceProject">
+        update community_service_project
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="serviceProjectName != null and serviceProjectName != ''">service_project_name = #{serviceProjectName},</if>
+            <if test="serviceProjectContent != null and serviceProjectContent != ''">service_project_content = #{serviceProjectContent},</if>
+            <if test="serviceProjectFee != null">service_project_fee = #{serviceProjectFee},</if>
+        </trim>
+        where service_project_id = #{serviceProjectId}
+    </update>
+
+    <delete id="deleteCommunityServiceProjectByServiceProjectId" parameterType="Long">
+        delete from community_service_project where service_project_id = #{serviceProjectId}
+    </delete>
+
+    <delete id="deleteCommunityServiceProjectByServiceProjectIds" parameterType="String">
+        delete from community_service_project where service_project_id in 
+        <foreach item="serviceProjectId" collection="array" open="(" separator="," close=")">
+            #{serviceProjectId}
+        </foreach>
+    </delete>
+
+</mapper>

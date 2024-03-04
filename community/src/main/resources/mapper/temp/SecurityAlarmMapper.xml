@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.community.sys.mapper.SecurityAlarmMapper">
+    
+    <resultMap type="SecurityAlarm" id="SecurityAlarmResult">
+        <result property="alarmTime"    column="alarm_time"    />
+        <result property="alarmLocation"    column="alarm_location"    />
+        <result property="alarmType"    column="alarm_type"    />
+    </resultMap>
+
+    <sql id="selectSecurityAlarmVo">
+        select alarm_time, alarm_location, alarm_type from security_alarm
+    </sql>
+
+    <select id="selectSecurityAlarmList" parameterType="SecurityAlarm" resultMap="SecurityAlarmResult">
+        <include refid="selectSecurityAlarmVo"/>
+        <where>  
+            <if test="alarmTime != null "> and alarm_time = #{alarmTime}</if>
+            <if test="alarmLocation != null  and alarmLocation != ''"> and alarm_location = #{alarmLocation}</if>
+            <if test="alarmType != null  and alarmType != ''"> and alarm_type = #{alarmType}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityAlarmByAlarmTime" parameterType="Date" resultMap="SecurityAlarmResult">
+        <include refid="selectSecurityAlarmVo"/>
+        where alarm_time = #{alarmTime}
+    </select>
+        
+    <insert id="insertSecurityAlarm" parameterType="SecurityAlarm">
+        insert into security_alarm
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="alarmTime != null">alarm_time,</if>
+            <if test="alarmLocation != null and alarmLocation != ''">alarm_location,</if>
+            <if test="alarmType != null and alarmType != ''">alarm_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="alarmTime != null">#{alarmTime},</if>
+            <if test="alarmLocation != null and alarmLocation != ''">#{alarmLocation},</if>
+            <if test="alarmType != null and alarmType != ''">#{alarmType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityAlarm" parameterType="SecurityAlarm">
+        update security_alarm
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="alarmLocation != null and alarmLocation != ''">alarm_location = #{alarmLocation},</if>
+            <if test="alarmType != null and alarmType != ''">alarm_type = #{alarmType},</if>
+        </trim>
+        where alarm_time = #{alarmTime}
+    </update>
+
+    <delete id="deleteSecurityAlarmByAlarmTime" parameterType="Date">
+        delete from security_alarm where alarm_time = #{alarmTime}
+    </delete>
+
+    <delete id="deleteSecurityAlarmByAlarmTimes" parameterType="String">
+        delete from security_alarm where alarm_time in 
+        <foreach item="alarmTime" collection="array" open="(" separator="," close=")">
+            #{alarmTime}
+        </foreach>
+    </delete>
+
+</mapper>

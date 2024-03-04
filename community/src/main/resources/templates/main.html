@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('图表组合')"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <!-- 出入流量与上月相比变化情况-->
+        <div class="col-sm-3">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h5 class="m-b-md">出入流量</h5>
+                    <h2 class="text-navy">
+                        <i class="fa fa-play fa-align-justify"></i> <em id="EntryLogNums"></em>
+                    </h2>
+                    更新时间：<span class="nowTime">${nowTime}</span>
+                </div>
+            </div>
+        </div>
+        <!-- 活动数量与上月相比变化情况-->
+        <div class="col-sm-3">
+            <div class="ibox">
+                <div class="ibox-content ">
+                    <h5 class="m-b-md">活动数量</h5>
+                    <h2 class="text-navy">
+                        <i class="fa fa-play fa-align-justify"></i> <em id="ActivityNums"></em>
+                    </h2>
+                    更新时间：<span class="nowTime">${nowTime}</span>
+                </div>
+            </div>
+        </div>
+        <!-- 社区服务数量-->
+        <div class="col-sm-3">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h5 class="m-b-md">社区服务数量</h5>
+                    <h2 class="text-danger">
+                        <i class="fa fa-play fa-align-justify"></i> <em id="ServiceNums"></em>
+                    </h2>
+                    更新时间：<span class="nowTime">${nowTime}</span>
+                </div>
+            </div>
+        </div>
+        <!-- 物业费-->
+        <div class="col-sm-3">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h5 class="m-b-md">物业费</h5>
+                    <h2 class="text-danger">
+                        <i class="fa fa-play fa-align-justify"></i> <em id="FeeNums"></em>
+                    </h2>
+                    更新时间：<span class="nowTime">${nowTime}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h5>本日出入流量</h5>
+                    <h2 id="EntryLogNumsDay">${EntryLogNumsDay}</h2>
+                    <div id="sparkline1"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h5>本周出入流量</h5>
+                    <h2 id="EntryLogNumsWeek">${EntryLogNumsWeek}</h2>
+                    <div id="sparkline2"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h5>本月出入流量</h5>
+                    <h2 id="EntryLogNumsMonth">${EntryLogNumsMonth}</h2>
+                    <div id="sparkline3"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h5>月平均流量</h5>
+                    <h2 id="EntryLogNumsAvgMonth">${EntryLogNumsMonth}</h2>
+                    <div id="sparkline4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h5>进入小区</h5>
+                    <h2 id="EntryLogIn">65%</h2>
+                    <div class="progress progress-mini">
+                        <div style="width: 68%;" class="progress-bar"></div>
+                    </div>
+                    更新时间：<span class="nowTime">${nowTime}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h5>外出小区</h5>
+                    <h2 id="EntryLogOut"></h2>
+                    <div class="progress progress-mini">
+                        <div style="width: 78%;" class="progress-bar"></div>
+                    </div>
+
+                    更新时间：<span class="nowTime">${nowTime}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h5>工作人员出入</h5>
+                    <h2 id="EntryLogWorker"></h2>
+                    <div class="progress progress-mini">
+                        <div style="width: 38%;" class="progress-bar progress-bar-danger"></div>
+                    </div>
+
+                    更新时间：<span class="nowTime">${nowTime}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h5>租客出入</h5>
+                    <h2 id="EntryLogTenant">20%</h2>
+                    <div class="progress progress-mini">
+                        <div style="width: 28%;" class="progress-bar progress-bar-danger"></div>
+                    </div>
+
+                    更新时间：<span class="nowTime">${nowTime}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h5>安全事件</h5>
+                    <table class="table table-stripped small m-t-md">
+                        <tbody>
+                        <tr>
+                            <td class="no-borders">
+                                <i class="fa fa-circle text-navy"></i>
+                            </td>
+                            <td class="no-borders" id="alarmName0">
+                                ${alarmName0}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i class="fa fa-circle text-navy"></i>
+                            </td>
+                            <td class="no-borders" id="alarmName1">
+                                ${alarmName1}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i class="fa fa-circle text-navy"></i>
+                            </td>
+                            <td class="no-borders" id="alarmName2">
+                                ${alarmName2}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h5>社区服务</h5>
+                    <table class="table table-stripped small m-t-md">
+                        <tbody>
+                        <tr>
+                            <td class="no-borders">
+                                <i class="fa fa-circle text-danger"></i>
+                            </td>
+                            <td class="no-borders" id="serviceName0">
+                                ${serviceName0}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i class="fa fa-circle text-danger"></i>
+                            </td>
+                            <td class="no-borders" id="serviceName1">
+                                ${serviceName1}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i class="fa fa-circle text-danger"></i>
+                            </td>
+                            <td class="no-borders" id="serviceName2">
+                                ${serviceName2}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h5>社区活动</h5>
+                    <table class="table table-stripped small m-t-md">
+                        <tbody>
+                        <tr>
+                            <td class="no-borders">
+                                <i class="fa fa-circle text-danger"></i>
+                            </td>
+                            <td class="no-borders" id="activityName0">
+                                ${activityName0}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i class="fa fa-circle text-danger"></i>
+                            </td>
+                            <td class="no-borders" id="activityName1">
+                                ${activityName1}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i class="fa fa-circle text-danger"></i>
+                            </td>
+                            <td class="no-borders" id="activityName2">
+                                ${activityName2}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: peity-js"/>
+<th:block th:include="include :: sparkline-js"/>
+<script type="text/javascript">
+
+
+    var time = document.getElementsByClassName("nowTime");
+    for (const item in time) {
+        time[item].textContent = new Date().toLocaleString();
+    }
+
+    $(document).ready(function () {
+
+        $.ajax({
+            url: ctx + "chart/EntryLogAndLastMonth",
+            success: function (data) {
+                if (data[0] > data[1]) {
+                    document.getElementById("EntryLogNums").textContent = "上升";
+                } else {
+                    document.getElementById("EntryLogNums").textContent = "下降";
+                }
+            }
+        })
+
+        $.ajax({
+            url: ctx + "chart/ActivityAndLastMonth",
+            success: function (data) {
+                if (data[0] > data[1]) {
+                    document.getElementById("ActivityNums").textContent = "上升";
+                } else {
+                    document.getElementById("ActivityNums").textContent = "下降";
+                }
+            }
+        })
+
+        $.ajax({
+            url: ctx + "chart/ServiceAndLastMonth",
+            success: function (data) {
+                document.getElementById("ServiceNums").textContent = data;
+            }
+        })
+
+        $.ajax({
+            url: ctx + "chart/FeeAndLastMonth",
+            success: function (data) {
+                document.getElementById("FeeNums").textContent = data;
+            }
+        })
+
+        $.ajax({
+            url: ctx + "chart/EntryLogIn",
+            success: function (data) {
+                document.getElementById("EntryLogIn").textContent = data;
+            }
+        })
+
+        $.ajax({
+            url: ctx + "chart/EntryLogOut",
+            success: function (data) {
+                document.getElementById("EntryLogOut").textContent = data;
+            }
+        })
+
+        $.ajax({
+            url: ctx + "chart/EntryLogWorker",
+            success: function (data) {
+                document.getElementById("EntryLogWorker").textContent = data;
+            }
+        })
+
+        $.ajax({
+            url: ctx + "chart/EntryLogTenant",
+            success: function (data) {
+                document.getElementById("EntryLogTenant").textContent = data;
+            }
+        })
+
+        $.ajax({
+            url: ctx + "chart/EntryLogChartsDay",
+            success: function (data) {
+                $("#sparkline1").sparkline(data, {
+                    type: 'line',
+                    width: '100%',
+                    height: '60',
+                    lineColor: '#1ab394',
+                    fillColor: "#ffffff"
+                });
+            }
+        });
+
+        $.ajax({
+            url: ctx + "chart/EntryLogChartsWeek",
+            success: function (data) {
+                $("#sparkline2").sparkline(data, {
+                    type: 'line',
+                    width: '100%',
+                    height: '60',
+                    lineColor: '#1ab394',
+                    fillColor: "#ffffff"
+                });
+            }
+        })
+
+        $.ajax({
+            url: ctx + "chart/EntryLogChartsMonth",
+            success: function (data) {
+                $("#sparkline3").sparkline(data, {
+                    type: 'line',
+                    width: '100%',
+                    height: '60',
+                    lineColor: '#ed5565',
+                    fillColor: "#ffffff"
+                });
+            }
+        })
+
+        $("#sparkline4").sparkline([24, 43, 33, 55, 64, 72, 44, 22], {
+            type: 'line',
+            width: '100%',
+            height: '60',
+            lineColor: '#ed5565',
+            fillColor: "#ffffff"
+        });
+
+    });
+
+    $(function () {
+        $("span.pie").peity("pie", {
+            fill: ['#1ab394', '#d7d7d7', '#ffffff']
+        })
+
+        $(".line").peity("line", {
+            fill: '#1ab394',
+            stroke: '#169c81',
+        })
+
+        $(".bar").peity("bar", {
+            fill: ["#1ab394", "#d7d7d7"]
+        })
+
+        $(".bar_dashboard").peity("bar", {
+            fill: ["#1ab394", "#d7d7d7"],
+            width: 100
+        })
+
+        var updatingChart = $(".updating-chart").peity("line", {fill: '#1ab394', stroke: '#169c81', width: 64})
+
+        setInterval(function () {
+            var random = Math.round(Math.random() * 10)
+            var values = updatingChart.text().split(",")
+            values.shift()
+            values.push(random)
+
+            updatingChart
+                .text(values.join(","))
+                .change()
+        }, 1000);
+    })
+
+    $.ajax({
+        url: ctx + 'chart/serviceName',
+        success: function (response) {
+            serviceName0 = document.getElementById('serviceName0');
+            serviceName0.textContent = response[0];
+            serviceName1 = document.getElementById('serviceName1');
+            serviceName1.textContent = response[1];
+            serviceName2 = document.getElementById('serviceName2');
+            serviceName2.textContent = response[2];
+        }
+    })
+
+    $.ajax({
+        url: ctx + 'chart/activityName',
+        success: function (response) {
+            activityName0 = document.getElementById('activityName0');
+            activityName0.textContent = response[0];
+            activityName1 = document.getElementById('activityName1');
+            activityName1.textContent = response[1];
+            activityName2 = document.getElementById('activityName2');
+            activityName2.textContent = response[2];
+        }
+    })
+
+    $.ajax({
+        url: ctx + 'chart/alarmName',
+        success: function (response) {
+            alarmName0 = document.getElementById('alarmName0');
+            alarmName0.textContent = response[0];
+            alarmName1 = document.getElementById('alarmName1');
+            alarmName1.textContent = response[1];
+            alarmName2 = document.getElementById('alarmName2');
+            alarmName2.textContent = response[2];
+        }
+    })
+
+    $.ajax({
+        url: ctx + 'chart/EntryLogNums',
+        success: function (response) {
+            EntryLogNumsDay = document.getElementById('EntryLogNumsDay');
+            EntryLogNumsDay.textContent = response[0];
+            EntryLogNumsWeek = document.getElementById('EntryLogNumsWeek');
+            EntryLogNumsWeek.textContent = response[1];
+            EntryLogNumsMonth = document.getElementById('EntryLogNumsMonth');
+            EntryLogNumsMonth.textContent = response[2];
+            document.getElementById("EntryLogNumsAvgMonth").textContent = response[2] / 30;
+        }
+    })
+
+</script>
+</body>
+</html>

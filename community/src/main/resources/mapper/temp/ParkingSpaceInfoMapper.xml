@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.community.sys.mapper.ParkingSpaceInfoMapper">
+    
+    <resultMap type="ParkingSpaceInfo" id="ParkingSpaceInfoResult">
+        <result property="parkingSpaceId"    column="parking_space_id"    />
+        <result property="parkingSpaceNo"    column="parking_space_no"    />
+        <result property="parkingSpaceType"    column="parking_space_type"    />
+        <result property="parkingSpacePrice"    column="parking_space_price"    />
+        <result property="parkingType"    column="parking_type"    />
+    </resultMap>
+
+    <sql id="selectParkingSpaceInfoVo">
+        select parking_space_id, parking_space_no, parking_space_type, parking_space_price, parking_type from parking_space_info
+    </sql>
+
+    <select id="selectParkingSpaceInfoList" parameterType="ParkingSpaceInfo" resultMap="ParkingSpaceInfoResult">
+        <include refid="selectParkingSpaceInfoVo"/>
+        <where>  
+            <if test="parkingSpaceNo != null  and parkingSpaceNo != ''"> and parking_space_no = #{parkingSpaceNo}</if>
+            <if test="parkingSpaceType != null  and parkingSpaceType != ''"> and parking_space_type = #{parkingSpaceType}</if>
+            <if test="parkingSpacePrice != null "> and parking_space_price = #{parkingSpacePrice}</if>
+            <if test="parkingType != null "> and parking_type = #{parkingType}</if>
+        </where>
+    </select>
+    
+    <select id="selectParkingSpaceInfoByParkingSpaceId" parameterType="Long" resultMap="ParkingSpaceInfoResult">
+        <include refid="selectParkingSpaceInfoVo"/>
+        where parking_space_id = #{parkingSpaceId}
+    </select>
+        
+    <insert id="insertParkingSpaceInfo" parameterType="ParkingSpaceInfo" useGeneratedKeys="true" keyProperty="parkingSpaceId">
+        insert into parking_space_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parkingSpaceNo != null and parkingSpaceNo != ''">parking_space_no,</if>
+            <if test="parkingSpaceType != null and parkingSpaceType != ''">parking_space_type,</if>
+            <if test="parkingSpacePrice != null">parking_space_price,</if>
+            <if test="parkingType != null">parking_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="parkingSpaceNo != null and parkingSpaceNo != ''">#{parkingSpaceNo},</if>
+            <if test="parkingSpaceType != null and parkingSpaceType != ''">#{parkingSpaceType},</if>
+            <if test="parkingSpacePrice != null">#{parkingSpacePrice},</if>
+            <if test="parkingType != null">#{parkingType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateParkingSpaceInfo" parameterType="ParkingSpaceInfo">
+        update parking_space_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parkingSpaceNo != null and parkingSpaceNo != ''">parking_space_no = #{parkingSpaceNo},</if>
+            <if test="parkingSpaceType != null and parkingSpaceType != ''">parking_space_type = #{parkingSpaceType},</if>
+            <if test="parkingSpacePrice != null">parking_space_price = #{parkingSpacePrice},</if>
+            <if test="parkingType != null">parking_type = #{parkingType},</if>
+        </trim>
+        where parking_space_id = #{parkingSpaceId}
+    </update>
+
+    <delete id="deleteParkingSpaceInfoByParkingSpaceId" parameterType="Long">
+        delete from parking_space_info where parking_space_id = #{parkingSpaceId}
+    </delete>
+
+    <delete id="deleteParkingSpaceInfoByParkingSpaceIds" parameterType="String">
+        delete from parking_space_info where parking_space_id in 
+        <foreach item="parkingSpaceId" collection="array" open="(" separator="," close=")">
+            #{parkingSpaceId}
+        </foreach>
+    </delete>
+
+</mapper>

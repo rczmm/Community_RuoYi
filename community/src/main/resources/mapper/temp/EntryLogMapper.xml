@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.community.sys.mapper.EntryLogMapper">
+    
+    <resultMap type="EntryLog" id="EntryLogResult">
+        <result property="entryid"    column="entryid"    />
+        <result property="entryperson"    column="entryperson"    />
+        <result property="entrytime"    column="entrytime"    />
+        <result property="entrytype"    column="entrytype"    />
+        <result property="entrypersontype"    column="entrypersontype"    />
+        <result property="entryphoto"    column="entryphoto"    />
+    </resultMap>
+
+    <sql id="selectEntryLogVo">
+        select entryid, entryperson, entrytime, entrytype, entrypersontype, entryphoto from entry_log
+    </sql>
+
+    <select id="selectEntryLogList" parameterType="EntryLog" resultMap="EntryLogResult">
+        <include refid="selectEntryLogVo"/>
+        <where>  
+            <if test="entryperson != null  and entryperson != ''"> and entryperson = #{entryperson}</if>
+            <if test="entrytime != null "> and entrytime = #{entrytime}</if>
+            <if test="entrytype != null  and entrytype != ''"> and entrytype = #{entrytype}</if>
+            <if test="entrypersontype != null  and entrypersontype != ''"> and entrypersontype = #{entrypersontype}</if>
+            <if test="entryphoto != null  and entryphoto != ''"> and entryphoto = #{entryphoto}</if>
+        </where>
+    </select>
+    
+    <select id="selectEntryLogByEntryid" parameterType="Long" resultMap="EntryLogResult">
+        <include refid="selectEntryLogVo"/>
+        where entryid = #{entryid}
+    </select>
+        
+    <insert id="insertEntryLog" parameterType="EntryLog" useGeneratedKeys="true" keyProperty="entryid">
+        insert into entry_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="entryperson != null">entryperson,</if>
+            <if test="entrytime != null">entrytime,</if>
+            <if test="entrytype != null">entrytype,</if>
+            <if test="entrypersontype != null">entrypersontype,</if>
+            <if test="entryphoto != null">entryphoto,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="entryperson != null">#{entryperson},</if>
+            <if test="entrytime != null">#{entrytime},</if>
+            <if test="entrytype != null">#{entrytype},</if>
+            <if test="entrypersontype != null">#{entrypersontype},</if>
+            <if test="entryphoto != null">#{entryphoto},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEntryLog" parameterType="EntryLog">
+        update entry_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="entryperson != null">entryperson = #{entryperson},</if>
+            <if test="entrytime != null">entrytime = #{entrytime},</if>
+            <if test="entrytype != null">entrytype = #{entrytype},</if>
+            <if test="entrypersontype != null">entrypersontype = #{entrypersontype},</if>
+            <if test="entryphoto != null">entryphoto = #{entryphoto},</if>
+        </trim>
+        where entryid = #{entryid}
+    </update>
+
+    <delete id="deleteEntryLogByEntryid" parameterType="Long">
+        delete from entry_log where entryid = #{entryid}
+    </delete>
+
+    <delete id="deleteEntryLogByEntryids" parameterType="String">
+        delete from entry_log where entryid in 
+        <foreach item="entryid" collection="array" open="(" separator="," close=")">
+            #{entryid}
+        </foreach>
+    </delete>
+
+</mapper>

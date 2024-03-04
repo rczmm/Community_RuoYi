@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增安全报警')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-alarm-add">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">日期选择：</label>
+                    <div class="col-sm-9">
+                        <div class="input-group date">
+                            <input name="alarmTime" class="form-control" placeholder="yyyy-MM-dd" type="text" required>
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">地点：</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="alarmLocation" class="form-control" placeholder="请输入文本" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">类型：</label>
+                    <div class="col-sm-9">
+                        <select name="alarmType" class="form-control m-b" th:with="type=${@dict.getType('com_working_type')}" required>
+                            <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "temp/alarm"
+        $("#form-alarm-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-alarm-add').serialize());
+            }
+        }
+
+        $("input[name='alarmTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

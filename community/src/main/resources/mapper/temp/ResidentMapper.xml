@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.community.sys.mapper.ResidentMapper">
+    
+    <resultMap type="Resident" id="ResidentResult">
+        <result property="residentId"    column="resident_id"    />
+        <result property="name"    column="name"    />
+        <result property="gender"    column="gender"    />
+        <result property="idCard"    column="id_card"    />
+        <result property="address"    column="address"    />
+        <result property="contact"    column="contact"    />
+        <result property="familyMembers"    column="family_members"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+
+    <sql id="selectResidentVo">
+        select resident_id, name, gender, id_card, address, contact, family_members, type from resident
+    </sql>
+
+    <select id="selectResidentList" parameterType="Resident" resultMap="ResidentResult">
+        <include refid="selectResidentVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="gender != null  and gender != ''"> and gender = #{gender}</if>
+            <if test="idCard != null  and idCard != ''"> and id_card = #{idCard}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="contact != null  and contact != ''"> and contact = #{contact}</if>
+            <if test="familyMembers != null  and familyMembers != ''"> and family_members = #{familyMembers}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+        </where>
+    </select>
+    
+    <select id="selectResidentByResidentId" parameterType="Long" resultMap="ResidentResult">
+        <include refid="selectResidentVo"/>
+        where resident_id = #{residentId}
+    </select>
+        
+    <insert id="insertResident" parameterType="Resident" useGeneratedKeys="true" keyProperty="residentId">
+        insert into resident
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="gender != null and gender != ''">gender,</if>
+            <if test="idCard != null and idCard != ''">id_card,</if>
+            <if test="address != null and address != ''">address,</if>
+            <if test="contact != null and contact != ''">contact,</if>
+            <if test="familyMembers != null and familyMembers != ''">family_members,</if>
+            <if test="type != null">type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="gender != null and gender != ''">#{gender},</if>
+            <if test="idCard != null and idCard != ''">#{idCard},</if>
+            <if test="address != null and address != ''">#{address},</if>
+            <if test="contact != null and contact != ''">#{contact},</if>
+            <if test="familyMembers != null and familyMembers != ''">#{familyMembers},</if>
+            <if test="type != null">#{type},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResident" parameterType="Resident">
+        update resident
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="gender != null and gender != ''">gender = #{gender},</if>
+            <if test="idCard != null and idCard != ''">id_card = #{idCard},</if>
+            <if test="address != null and address != ''">address = #{address},</if>
+            <if test="contact != null and contact != ''">contact = #{contact},</if>
+            <if test="familyMembers != null and familyMembers != ''">family_members = #{familyMembers},</if>
+            <if test="type != null">type = #{type},</if>
+        </trim>
+        where resident_id = #{residentId}
+    </update>
+
+    <delete id="deleteResidentByResidentId" parameterType="Long">
+        delete from resident where resident_id = #{residentId}
+    </delete>
+
+    <delete id="deleteResidentByResidentIds" parameterType="String">
+        delete from resident where resident_id in 
+        <foreach item="residentId" collection="array" open="(" separator="," close=")">
+            #{residentId}
+        </foreach>
+    </delete>
+
+</mapper>
